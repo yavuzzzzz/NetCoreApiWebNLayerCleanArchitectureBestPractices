@@ -23,8 +23,10 @@ namespace App.Repositories.Extensions
 
             });
 
-            services.AddScoped <IProductRepository, ProductRepository>(); // ProductRepository is added to the DI container
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>)); // GenericRepository is added to the DI container
+            services.AddScoped <IProductRepository, ProductRepository>(); 
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>)); 
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;
         }
     }
