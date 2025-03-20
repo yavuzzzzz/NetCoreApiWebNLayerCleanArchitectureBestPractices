@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using App.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.API.Controllers

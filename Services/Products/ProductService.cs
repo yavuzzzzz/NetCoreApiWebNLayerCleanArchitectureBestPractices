@@ -27,6 +27,19 @@ namespace App.Services.Products
 
         }
 
+        public async Task<ServiceResult<List<ProductDto>>> GetPagedAllListAsync(int pageNumber, int pageSize)
+        {
+            // 1-10 => ilk 10 kayıt skip(0).take(10)
+            // 11-20 => ikinci 10 kayıt skip(10).take(10)
+
+            var products = await productRepository.GetAll()
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var productAsDto = products.Select(p => new ProductDto(p.Id, p.Name, p.Price, p.Stock)).ToList();
+            return ServiceResult<List<ProductDto>>.Success(productAsDto);
+        }
         public async Task<ServiceResult<ProductDto?>> GetByIdAsync(int id)
         {
             var product = await productRepository.GetByIdAsync(id);
