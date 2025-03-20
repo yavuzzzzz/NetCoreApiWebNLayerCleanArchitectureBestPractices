@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Text.Json.Serialization;
 
 namespace App.Services
 {
@@ -6,10 +7,12 @@ namespace App.Services
     {
         public T? Data { get; set; }
         public List<string>? ErrorMessage { get; set; }
-
-        public bool IsSuccess => ErrorMessage == null || ErrorMessage.Count == 0; 
+        [JsonIgnore] //this attribute is used to avoid the serialization of the property
+        public bool IsSuccess => ErrorMessage == null || ErrorMessage.Count == 0;
+        [JsonIgnore]
         public bool IsFailure => !IsSuccess;
-        public HttpStatusCode Status{ get; set; }
+        [JsonIgnore]
+        public HttpStatusCode Status { get; set; }
 
         //static factory methods to manage the creation of ServiceResult objects (avoiding the need to use the new keyword)
         public static ServiceResult<T> Success(T data, HttpStatusCode status = HttpStatusCode.OK)
@@ -38,23 +41,25 @@ namespace App.Services
                 ErrorMessage = [errorMessage],
                 Status = status
 
-            }; 
+            };
         }
-    } 
+    }
     public class ServiceResult
     {
         public List<string>? ErrorMessage { get; set; }
-
-        public bool IsSuccess => ErrorMessage == null || ErrorMessage.Count == 0; 
+        [JsonIgnore]
+        public bool IsSuccess => ErrorMessage == null || ErrorMessage.Count == 0;
+        [JsonIgnore]
         public bool IsFailure => !IsSuccess;
-        public HttpStatusCode Status{ get; set; }
+        [JsonIgnore]
+        public HttpStatusCode Status { get; set; }
 
         //static factory methods to manage the creation of ServiceResult objects (avoiding the need to use the new keyword)
-        public static ServiceResult Success( HttpStatusCode status = HttpStatusCode.OK)
+        public static ServiceResult Success(HttpStatusCode status = HttpStatusCode.OK)
         {
             return new ServiceResult
             {
-            
+
                 Status = status
             };
         }
@@ -76,7 +81,7 @@ namespace App.Services
                 ErrorMessage = [errorMessage],
                 Status = status
 
-            }; 
+            };
         }
     }
 }
