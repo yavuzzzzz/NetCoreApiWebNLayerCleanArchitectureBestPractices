@@ -9,10 +9,9 @@ namespace App.Services
         public List<string>? ErrorMessage { get; set; }
         [JsonIgnore] //this attribute is used to avoid the serialization of the property
         public bool IsSuccess => ErrorMessage == null || ErrorMessage.Count == 0;
-        [JsonIgnore]
-        public bool IsFailure => !IsSuccess;
-        [JsonIgnore]
-        public HttpStatusCode Status { get; set; }
+        [JsonIgnore] public bool IsFailure => !IsSuccess;
+        [JsonIgnore] public HttpStatusCode Status { get; set; } 
+        [JsonIgnore] public string? UrlAsCreated { get; set; }
 
         //static factory methods to manage the creation of ServiceResult objects (avoiding the need to use the new keyword)
         public static ServiceResult<T> Success(T data, HttpStatusCode status = HttpStatusCode.OK)
@@ -21,6 +20,15 @@ namespace App.Services
             {
                 Data = data,
                 Status = status
+            };
+        }
+        public static ServiceResult<T> SuccessAsCreated(T data, string urlAsCreated) //this method is used to return the URL of the created resource
+        {
+            return new ServiceResult<T>
+            {
+                Data = data,
+                Status = HttpStatusCode.Created,
+                UrlAsCreated = urlAsCreated
             };
         }
 
@@ -45,43 +53,43 @@ namespace App.Services
         }
     }
     public class ServiceResult
+{
+    public List<string>? ErrorMessage { get; set; }
+    [JsonIgnore]
+    public bool IsSuccess => ErrorMessage == null || ErrorMessage.Count == 0;
+    [JsonIgnore]
+    public bool IsFailure => !IsSuccess;
+    [JsonIgnore]
+    public HttpStatusCode Status { get; set; }
+
+    //static factory methods to manage the creation of ServiceResult objects (avoiding the need to use the new keyword)
+    public static ServiceResult Success(HttpStatusCode status = HttpStatusCode.OK)
     {
-        public List<string>? ErrorMessage { get; set; }
-        [JsonIgnore]
-        public bool IsSuccess => ErrorMessage == null || ErrorMessage.Count == 0;
-        [JsonIgnore]
-        public bool IsFailure => !IsSuccess;
-        [JsonIgnore]
-        public HttpStatusCode Status { get; set; }
-
-        //static factory methods to manage the creation of ServiceResult objects (avoiding the need to use the new keyword)
-        public static ServiceResult Success(HttpStatusCode status = HttpStatusCode.OK)
+        return new ServiceResult
         {
-            return new ServiceResult
-            {
 
-                Status = status
-            };
-        }
-
-        public static ServiceResult Failure(List<string> errorMessage, HttpStatusCode status = HttpStatusCode.BadRequest)
-        {
-            return new ServiceResult
-            {
-                ErrorMessage = errorMessage,
-                Status = status
-
-            };
-        }
-
-        public static ServiceResult Failure(string errorMessage, HttpStatusCode status = HttpStatusCode.BadRequest)
-        {
-            return new ServiceResult
-            {
-                ErrorMessage = [errorMessage],
-                Status = status
-
-            };
-        }
+            Status = status
+        };
     }
+
+    public static ServiceResult Failure(List<string> errorMessage, HttpStatusCode status = HttpStatusCode.BadRequest)
+    {
+        return new ServiceResult
+        {
+            ErrorMessage = errorMessage,
+            Status = status
+
+        };
+    }
+
+    public static ServiceResult Failure(string errorMessage, HttpStatusCode status = HttpStatusCode.BadRequest)
+    {
+        return new ServiceResult
+        {
+            ErrorMessage = [errorMessage],
+            Status = status
+
+        };
+    }
+}
 }
