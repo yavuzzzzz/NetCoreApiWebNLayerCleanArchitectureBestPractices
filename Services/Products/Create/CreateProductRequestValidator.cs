@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
 
-namespace App.Services.Products
+namespace App.Services.Products.Create
 {
     public class CreateProductRequestValidator : AbstractValidator<CreateProductRequest>
     {

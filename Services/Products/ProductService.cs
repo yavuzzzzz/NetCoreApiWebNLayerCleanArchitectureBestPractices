@@ -1,11 +1,14 @@
 ﻿using System.Net;
 using App.Repositories;
 using App.Repositories.Products;
+using App.Services.Products.Create;
+using App.Services.Products.Update;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Services.Products
 {
-    public class ProductService(IProductRepository productRepository, IUnitOfWork unitOfWork) : IProductService
+    public class ProductService(IProductRepository productRepository, IUnitOfWork unitOfWork, IMapper mapper) : IProductService
     {
         public async Task<ServiceResult<List<ProductDto>>> GetTopPriceProductsAsync(int count)
         {
@@ -22,8 +25,16 @@ namespace App.Services.Products
         public async Task<ServiceResult<List<ProductDto>>> GetAllListAsync()
         {
             var products = await productRepository.GetAll().ToListAsync();
-            var productAsDto = products.Select(p => new ProductDto(p.Id, p.Name, p.Price, p.Stock)).ToList();
-            return  ServiceResult<List<ProductDto>>.Success(productAsDto);
+
+            var productAsDto = mapper.Map<List<ProductDto>>(products);
+
+
+
+            #region Manuel mapping
+            //var productAsDto = products.Select(p => new ProductDto(p.Id, p.Name, p.Price, p.Stock)).ToList();
+
+            #endregion  
+            return ServiceResult<List<ProductDto>>.Success(productAsDto);
 
         }
 
@@ -36,8 +47,13 @@ namespace App.Services.Products
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
+            var productAsDto = mapper.Map<List<ProductDto>>(products);
 
-            var productAsDto = products.Select(p => new ProductDto(p.Id, p.Name, p.Price, p.Stock)).ToList();
+            #region Manuel Mapping
+
+            //var productAsDto = products.Select(p => new ProductDto(p.Id, p.Name, p.Price, p.Stock)).ToList();
+
+            #endregion
             return ServiceResult<List<ProductDto>>.Success(productAsDto);
         }
         public async Task<ServiceResult<ProductDto?>> GetByIdAsync(int id)
@@ -45,9 +61,16 @@ namespace App.Services.Products
             var product = await productRepository.GetByIdAsync(id);
             if (product is null)
             {
-                ServiceResult<ProductDto>.Failure("Product not found", HttpStatusCode.NotFound);
+              return ServiceResult<ProductDto?>.Failure("Product not found", HttpStatusCode.NotFound);
             }
-            var productAsDto = new ProductDto(product!.Id, product.Name, product.Price, product.Stock);
+
+            var productAsDto = mapper.Map<ProductDto>(product);
+
+            #region Manuel Mapping
+
+            //var productAsDto = new ProductDto(product!.Id, product.Name, product.Price, product.Stock);
+
+            #endregion
 
             return ServiceResult<ProductDto>.Success(productAsDto)!;
         }
