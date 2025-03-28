@@ -4,6 +4,7 @@ using App.Repositories.Products;
 using App.Services.ExceptionHandler;
 using App.Services.Products.Create;
 using App.Services.Products.Update;
+using App.Services.Products.UpdateStock;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
@@ -57,6 +58,7 @@ namespace App.Services.Products
             #endregion
             return ServiceResult<List<ProductDto>>.Success(productAsDto);
         }
+
         public async Task<ServiceResult<ProductDto?>> GetByIdAsync(int id)
         {
             var product = await productRepository.GetByIdAsync(id);
@@ -75,7 +77,6 @@ namespace App.Services.Products
 
             return ServiceResult<ProductDto>.Success(productAsDto)!;
         }
-
 
         public async Task<ServiceResult<CreateProductResponse>> CreateAsync(CreateProductRequest request)
         {
@@ -104,6 +105,13 @@ namespace App.Services.Products
             if (product is null)
             {
                 return ServiceResult.Failure("Product not found", HttpStatusCode.NotFound);
+            }
+
+            var isProductNameExist = await productRepository.Where(x => x.Name == request.Name && x.Id != product.Id).AnyAsync();
+
+            if (isProductNameExist)
+            {
+                return ServiceResult.Failure("Product name already exists", HttpStatusCode.BadRequest);
             }
 
             product.Name = request.Name;
