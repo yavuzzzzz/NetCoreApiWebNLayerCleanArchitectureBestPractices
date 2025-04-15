@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace App.Repositories.Categories
 {
@@ -15,7 +10,7 @@ namespace App.Repositories.Categories
 
         }
 
-        public IQueryable<Category> GetCategoriesByProductsAsync()
+        public IQueryable<Category> GetCategoryWithProducts()
         {
             return appDbContext.Categories.Include(x => x.Products).AsQueryable();
         }
