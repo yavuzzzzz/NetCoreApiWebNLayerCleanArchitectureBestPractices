@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using App.Repositories.Products;
 using App.Repositories;
+using App.Services.Categories;
 using App.Services.ExceptionHandler;
 using App.Services.Products;
 using FluentValidation;
@@ -15,6 +16,7 @@ namespace App.Services.Extensions
         public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<ICategoryService, CategoryService>();
 
             services.AddFluentValidationAutoValidation();
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
