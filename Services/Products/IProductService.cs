@@ -1,5 +1,4 @@
-﻿using App.Repositories.Products;
-using App.Services.Products.Create;
+﻿using App.Services.Products.Create;
 using App.Services.Products.Update;
 using App.Services.Products.UpdateStock;
 
